@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SDKHardware</string>
+    <string name="textview">Respuesta periférico</string>
+    <string name="hash_code">Hash code</string>
+</resources>
