@@ -1,12 +1,10 @@
 package com.credibanco.sdk.di.peripherals
 
 import com.credibanco.sdk.data.datasource.impl.ScannerDataSourceNexgo
-import com.credibanco.sdk.data.datasource.impl.ScannerDataSourceNexgoImpl
 import com.credibanco.sdk.data.repository.impl.ScannerRepositoryNexgoImpl
 import com.credibanco.sdk.domain.repository.ScannerRepositoryNexgo
 import com.credibanco.sdk.domain.usecase.ScannerUseCaseNexgo
 import com.credibanco.sdk.domain.usecase.impl.ScannerUseCaseNexgoImpl
-import com.nexgo.oaf.apiv3.DeviceEngine
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

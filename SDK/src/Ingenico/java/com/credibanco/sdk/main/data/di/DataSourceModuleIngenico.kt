@@ -5,6 +5,7 @@ import com.credibanco.sdk.datasource.DeviceDataSource
 import com.credibanco.sdk.datasource.PeripheralManagementDataSource
 import com.credibanco.sdk.datasource.ExternalPrintDataSourceGeneral
 import com.credibanco.sdk.domain.ExternalPrintUseCaseGeneral
+import com.credibanco.sdk.domain.di.Ingenico
 import com.credibanco.sdk.main.data.datasource.PeripheralManagementDataSourceIngenicoImpl
 import com.credibanco.sdk.main.data.datasource.impl.DeviceDataSourceIngenicoImpl
 import com.credibanco.sdk.main.data.datasource.impl.ExternalPrintDataSourceIngenicoImpl
@@ -28,11 +29,13 @@ object DataSourceModuleIngenico {
 
     @Singleton
     @Provides
+    @Ingenico
     fun provideExternalPrintDataSourceIngenico(): ExternalPrintDataSourceGeneral =
         ExternalPrintDataSourceIngenicoImpl()
 
     @Provides
     @Singleton
+    @Ingenico
     fun provideIngenicoPrintUseCase(externalPrintRepositoryIngenico: ExternalPrintRepositoryIngenico): ExternalPrintUseCaseGeneral {
         return ExternalPrintUseCaseIngenicoImpl(externalPrintRepositoryIngenico)
     }

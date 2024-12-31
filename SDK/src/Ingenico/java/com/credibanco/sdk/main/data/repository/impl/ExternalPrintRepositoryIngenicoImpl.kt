@@ -2,13 +2,12 @@ package com.credibanco.sdk.main.data.repository.impl
 
 import android.content.res.Resources
 import com.credibanco.sdk.datasource.ExternalPrintDataSourceGeneral
-import com.credibanco.sdk.main.data.datasource.PrintDataSourceIngenico
+import com.credibanco.sdk.domain.di.Ingenico
 import com.credibanco.sdk.main.domain.repository.ExternalPrintRepositoryIngenico
-import com.credibanco.sdk.main.util.printer.PrintConfig
 import javax.inject.Inject
 
 class ExternalPrintRepositoryIngenicoImpl @Inject constructor(
-    private val externalPrintDataSource: ExternalPrintDataSourceGeneral
+    @Ingenico private val externalPrintDataSource: ExternalPrintDataSourceGeneral
 ): ExternalPrintRepositoryIngenico {
     override suspend operator fun invoke(
         linesToPrint: ArrayList<String>,
