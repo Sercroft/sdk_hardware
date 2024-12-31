@@ -1,7 +1,7 @@
 package com.credibanco.sdk.di.peripherals
 
 import com.credibanco.sdk.data.repository.impl.ExternalPrintRepositoryNexgoImpl
-import com.credibanco.sdk.datasource.PrintDataSource
+import com.credibanco.sdk.datasource.ExternalPrintDataSourceGeneral
 import com.credibanco.sdk.domain.repository.ExternalPrintRepositoryNexgo
 import com.credibanco.sdk.domain.usecase.ExternalPrintUseCaseNexgo
 import com.credibanco.sdk.domain.usecase.impl.ExternalPrintUseCaseNexgoImpl
@@ -17,7 +17,7 @@ object ExternalPrintModule {
 
     @Provides
     @Singleton
-    fun provideExternalPrintRepositoryNexgo(externalPrintDataSource: PrintDataSource): ExternalPrintRepositoryNexgo =
+    fun provideExternalPrintRepositoryNexgo(externalPrintDataSource: ExternalPrintDataSourceGeneral): ExternalPrintRepositoryNexgo =
         ExternalPrintRepositoryNexgoImpl(externalPrintDataSource)
 
     @Provides
