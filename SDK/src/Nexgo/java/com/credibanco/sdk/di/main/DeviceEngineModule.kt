@@ -9,7 +9,6 @@ import com.credibanco.sdk.data.datasource.impl.ScannerDataSourceNexgo
 import com.credibanco.sdk.data.datasource.impl.ScannerDataSourceNexgoImpl
 import com.credibanco.sdk.datasource.ExternalPrintDataSourceGeneral
 import com.credibanco.sdk.datasource.PeripheralManagementDataSource
-import com.credibanco.sdk.domain.di.Nexgo
 import com.nexgo.oaf.apiv3.APIProxy
 import com.nexgo.oaf.apiv3.DeviceEngine
 import com.nexgo.oaf.apiv3.emv.EmvHandler2

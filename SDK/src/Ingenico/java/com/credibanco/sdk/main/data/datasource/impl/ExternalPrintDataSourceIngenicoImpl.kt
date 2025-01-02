@@ -4,7 +4,6 @@ import android.content.res.Resources
 import android.os.RemoteException
 import android.util.Log
 import com.credibanco.sdk.datasource.ExternalPrintDataSourceGeneral
-import com.credibanco.sdk.domain.ExternalPrintUseCaseGeneral
 import com.credibanco.sdk.main.util.ConstantsIngenico.TAG
 import com.usdk.apiservice.aidl.printer.ASCScale
 import com.usdk.apiservice.aidl.printer.ASCSize
@@ -42,14 +41,11 @@ class ExternalPrintDataSourceIngenicoImpl @Inject constructor(): ExternalPrintDa
 
     private fun startPrinter( linesToPrint: ArrayList<String>, letterSpacing: Int?, grayLevel: String?) {
         if (currentSheetNo > totalSheets) {
-            Log.i(TAG, "Se imprimieron todas las hojas.")
             return
         }
 
         printer?.apply {
             try {
-                Log.i(TAG, ">>> start print | sheetNo = $currentSheetNo")
-
                 linesToPrint.forEach { line ->
                     addText(AlignMode.LEFT, line)
                 }
@@ -88,7 +84,6 @@ class ExternalPrintDataSourceIngenicoImpl @Inject constructor(): ExternalPrintDa
                 // Iniciar la impresión
                 startPrint(object : OnPrintListener.Stub() {
                     override fun onFinish() {
-                        Log.i(TAG, "=> onFinish | sheetNo = $currentSheetNo")
                         currentSheetNo++
                         startPrinter(linesToPrint, letterSpacing, grayLevel) // Llama al método para imprimir la siguiente hoja
                     }

@@ -2,7 +2,6 @@ package com.credibanco.sdk.domain.usecase.impl
 
 import android.content.res.Resources
 import com.credibanco.sdk.domain.ExternalPrintUseCaseGeneral
-import com.credibanco.sdk.domain.di.Nexgo
 import com.credibanco.sdk.domain.repository.ExternalPrintRepositoryNexgo
 import javax.inject.Inject
 
