@@ -1,13 +1,14 @@
-package com.credibanco.sdk.data.repository.impl
+package com.credibanco.sdk.main.data.repository.impl
 
 import android.content.res.Resources
 import com.credibanco.sdk.datasource.ExternalPrintDataSourceGeneral
-import com.credibanco.sdk.domain.repository.ExternalPrintRepositoryNexgo
+import com.credibanco.sdk.domain.di.Ingenico
+import com.credibanco.sdk.main.domain.repository.ExternalPrintRepositoryIngenico
 import javax.inject.Inject
 
-class ExternalPrintRepositoryNexgoImpl @Inject constructor(
-    private val externalPrintDataSource: ExternalPrintDataSourceGeneral
-) : ExternalPrintRepositoryNexgo {
+class ExternalPrintRepositoryIngenicoImpl @Inject constructor(
+    @Ingenico private val externalPrintDataSource: ExternalPrintDataSourceGeneral
+): ExternalPrintRepositoryIngenico {
     override suspend operator fun invoke(
         linesToPrint: ArrayList<String>,
         packageName: String,
@@ -21,6 +22,6 @@ class ExternalPrintRepositoryNexgoImpl @Inject constructor(
         resources,
         typeface,
         letterSpacing,
-        grayLevel
+        grayLevel,
     )
 }

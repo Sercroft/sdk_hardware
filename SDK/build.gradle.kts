@@ -60,11 +60,11 @@ val coroutines          = rootProject.extra.get("coroutines_version") as String
 dependencies {
 
     "NexgoCompileOnly"(
-            files("C:\\Users\\USUARIO\\Documents\\SDK HARDWARE\\SDK\\libs\\nexgo_smartpos_sdk_v3_04_001__20211014.aar")
+        files("C:\\Users\\USUARIO\\Documents\\SDK HARDWARE\\SDK\\libs\\nexgo_smartpos_sdk_v3_04_001__20211014.aar")
     )
 
     "IngenicoImplementation"(
-            files("C:\\Users\\USUARIO\\Documents\\SDK HARDWARE\\SDK\\libs\\ingenico_usdk_api_aidl_limited_v20120210628.jar")
+        files("C:\\Users\\USUARIO\\Documents\\SDK HARDWARE\\SDK\\libs\\ingenico_usdk_api_aidl_limited_v20120210628.jar")
     )
     "IngenicoImplementation"(
         files("C:\\Users\\USUARIO\\Documents\\SDK HARDWARE\\SDK\\libs\\ingenico_usdk_api_aidl_v13_11_0_20231102.jar")

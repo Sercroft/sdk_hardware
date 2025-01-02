@@ -2,14 +2,13 @@ package com.credibanco.sdk.di.main
 
 import android.content.Context
 import com.credibanco.sdk.data.datasource.NFCTagDataSourceNexgo
-import com.credibanco.sdk.data.datasource.PeripheralManagementDataSourceNexgo
 import com.credibanco.sdk.data.datasource.impl.ExternalPrintDataSourceNexgoImpl
 import com.credibanco.sdk.data.datasource.impl.NFCTagDataSourceNexgoImpl
 import com.credibanco.sdk.data.datasource.impl.PeripheralManagementDataSourceNexgoImpl
 import com.credibanco.sdk.data.datasource.impl.ScannerDataSourceNexgo
 import com.credibanco.sdk.data.datasource.impl.ScannerDataSourceNexgoImpl
+import com.credibanco.sdk.datasource.ExternalPrintDataSourceGeneral
 import com.credibanco.sdk.datasource.PeripheralManagementDataSource
-import com.credibanco.sdk.datasource.PrintDataSource
 import com.nexgo.oaf.apiv3.APIProxy
 import com.nexgo.oaf.apiv3.DeviceEngine
 import com.nexgo.oaf.apiv3.emv.EmvHandler2
@@ -41,7 +40,7 @@ object DeviceEngineModule {
 
     @Provides
     @Singleton
-    fun provideExternalPrintDataSourceNexgo(deviceEngine: DeviceEngine): PrintDataSource =
+    fun provideExternalPrintDataSourceNexgo(deviceEngine: DeviceEngine): ExternalPrintDataSourceGeneral =
         ExternalPrintDataSourceNexgoImpl(deviceEngine)
 
     @Provides

@@ -2,7 +2,7 @@ package com.credibanco.sdk.datasource
 
 import android.content.res.Resources
 
-interface PrintDataSource {
+interface ExternalPrintDataSourceGeneral {
     suspend operator fun invoke(
         linesToPrint: ArrayList<String>,
         packageName: String,
