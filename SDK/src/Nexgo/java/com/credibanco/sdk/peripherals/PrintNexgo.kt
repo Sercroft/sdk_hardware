@@ -11,6 +11,7 @@ import com.credibanco.sdk.main.IntegrationPeripheralsNexgoSDK
 import com.credibanco.sdk.main.ResultHardwareSDK
 import com.credibanco.sdk.util.Constants
 import com.credibanco.sdk.util.Constants.N6
+import com.credibanco.sdk.util.Constants.N6S
 import com.credibanco.sdk.util.Constants.N86
 import com.credibanco.sdk.util.Constants.UN20
 import com.credibanco.sdk.util.FileUtil
@@ -25,7 +26,7 @@ class PrintNexgo(
         val model = Build.MODEL
 
         when (model) {
-            UN20, N6 -> {
+            UN20, N6, N6S -> {
                 Toast.makeText(context, "Función no permitida", Toast.LENGTH_LONG).show()
             }
 
@@ -46,7 +47,7 @@ class PrintNexgo(
                 //CON FONT_NORMAL = 32 CARACTERES POR LINEA
                 //CON FONT_IOU = 48 CARACTERES POR LINEA
 
-                /*val valuesToSend = ArrayList<String>().apply {
+                val valuesToSend = ArrayList<String>().apply {
                     add("${Constants.IMAGE}, $imageName, ${Constants.ALIGN_RIGHT}")
                     add("${Constants.TEXT}, $text, ${Constants.FONT_BIG}, ${Constants.ALIGN_RIGHT}")
                     add("${Constants.TEXT}, $text, ${Constants.FONT_BIG}, ${Constants.ALIGN_RIGHT}")
@@ -56,7 +57,7 @@ class PrintNexgo(
                     add("${Constants.TEXT}, $text, ${Constants.FONT_BIG}, ${Constants.ALIGN_RIGHT}")
                     add("${Constants.TEXT}, $text, ${Constants.FONT_BIG}, ${Constants.ALIGN_RIGHT}")
                     add("${Constants.QR}, ${Constants.FONT_NORMAL}, ${Constants.ALIGN_CENTER}")
-                }*/
+                }
 
                 IntegrationPeripheralsNexgoSDK.getSmartPosInstancePeripheralsNexgo().startPrint(
                     context,

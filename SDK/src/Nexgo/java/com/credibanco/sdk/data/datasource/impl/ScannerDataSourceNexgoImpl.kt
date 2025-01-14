@@ -1,10 +1,9 @@
 package com.credibanco.sdk.data.datasource.impl
 
 import android.os.Bundle
+import com.credibanco.sdk.datasource.ScannerDataSourceGeneral
 import com.credibanco.sdk.domain.model.ScannerCallbackObject
-import com.credibanco.sdk.util.NexgoPrintingConstants.CUSTOMER_EXIT
-import com.credibanco.sdk.util.NexgoPrintingConstants.ERROR_SCAN
-import com.credibanco.sdk.util.NexgoPrintingConstants.TIME_OUT
+import com.credibanco.sdk.util.NexgoPrintingConstants
 import com.nexgo.oaf.apiv3.DeviceEngine
 import com.nexgo.oaf.apiv3.SdkResult
 import com.nexgo.oaf.apiv3.device.scanner.OnScannerListener
@@ -15,7 +14,7 @@ import javax.inject.Inject
 
 class ScannerDataSourceNexgoImpl @Inject constructor(
     deviceEngine: DeviceEngine
-) : ScannerDataSourceNexgo,
+) : ScannerDataSourceGeneral,
     OnScannerListener {
 
     private var onScannerListener: OnScannerListener? = this
@@ -47,9 +46,9 @@ class ScannerDataSourceNexgoImpl @Inject constructor(
     override fun onScannerResult(retCode: Int, data: String?) {
         when (retCode) {
             SdkResult.Success -> toReturn = data.toString()
-            SdkResult.TimeOut -> toReturn = TIME_OUT
-            SdkResult.Scanner_Customer_Exit -> toReturn = CUSTOMER_EXIT
-            else -> toReturn = ERROR_SCAN
+            SdkResult.TimeOut -> toReturn = NexgoPrintingConstants.TIME_OUT
+            SdkResult.Scanner_Customer_Exit -> toReturn = NexgoPrintingConstants.CUSTOMER_EXIT
+            else -> toReturn = NexgoPrintingConstants.ERROR_SCAN
         }
         scannerCallbackObject?.invoke(ScannerCallbackObject.ScannerResultCallback(toReturn))
     }

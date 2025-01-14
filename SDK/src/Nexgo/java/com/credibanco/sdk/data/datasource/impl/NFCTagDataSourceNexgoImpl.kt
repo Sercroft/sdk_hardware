@@ -1,7 +1,12 @@
 package com.credibanco.sdk.data.datasource.impl
 
 import android.util.Log
-import com.credibanco.sdk.data.datasource.NFCTagDataSourceNexgo
+import com.credibanco.sdk.datasource.NFCTagDataSourceGeneral
+import com.credibanco.sdk.domain.EmvCallbackObjectSDK
+import com.credibanco.sdk.domain.KernelAvailableStateCallBackObjectSDK
+import com.credibanco.sdk.domain.ReadCardResponse
+import com.credibanco.sdk.domain.dto.CertEmv
+import com.credibanco.sdk.domain.dto.IdEmv
 import com.nexgo.common.ByteUtils
 import com.nexgo.oaf.apiv3.DeviceEngine
 import com.nexgo.oaf.apiv3.SdkResult
@@ -17,11 +22,11 @@ import javax.inject.Inject
 
 class NFCTagDataSourceNexgoImpl @Inject constructor(
     private val deviceEngine: DeviceEngine
-) : NFCTagDataSourceNexgo {
+) : NFCTagDataSourceGeneral {
 
     private val TAG: String = "Read Data"
     private val SUCESSFULL: String = "Successfull: "
-    override suspend fun invoke(isRequiredUID: Boolean?): String {
+    override suspend fun invokeNexgo(isRequiredUID: Boolean?): String {
         var toReturn = "NODATA"
 
         val ultralightCCardHandler = deviceEngine.ultralightEV1CardHandler
@@ -36,6 +41,106 @@ class NFCTagDataSourceNexgoImpl @Inject constructor(
         }
         cardReader.close(CardSlotTypeEnum.RF)
         return toReturn
+    }
+
+    override suspend fun isKernelRun(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun invokeIngenico(
+        idEmvList: List<IdEmv>,
+        totalAmount: Double,
+        systemTrace: String,
+        codTerm: String,
+        codEsta: String,
+        changeTagToDCC: Boolean,
+        transactionCurrencyCode: String?,
+        isDcc: Boolean,
+        emvCallback: (callbackObjectType: EmvCallbackObjectSDK) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun startEmv() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun startEmv(
+        idEmvList: List<IdEmv>,
+        emvCallback: (callbackObjectType: EmvCallbackObjectSDK) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun onPinInputSuccess(
+        retCode: Int,
+        emvCallback: (callbackObjectType: EmvCallbackObjectSDK) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun onPinInputFail(emvCallback: (callbackObjectType: EmvCallbackObjectSDK) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun onSetConfirmCardNoResponse(emvCallback: (callbackObjectType: EmvCallbackObjectSDK) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onOnlineResponse(
+        field55Response: String?,
+        responseCode: String?,
+        authCode: String?,
+        emvCallback: (callbackObjectType: EmvCallbackObjectSDK) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun cancelEmvProcess(emvCallback: (callbackObjectType: EmvCallbackObjectSDK) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun stopSearchCard() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onSetSelAppResponse(
+        selResult: Int?,
+        emvCallback: (callbackObjectType: EmvCallbackObjectSDK) -> Unit
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun isChipCardInserted(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun detectCard(
+        fallback: Boolean?,
+        idEmvList: List<IdEmv>?,
+        certEmvList: List<CertEmv>?
+    ): ReadCardResponse {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getRSAKey(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDeviceSerial(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun getEntryModeType(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun isKernelAvailableState(kernelAvailableCallback: (callbackObjectType: KernelAvailableStateCallBackObjectSDK) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getVersionSDK(): String {
+        TODO("Not yet implemented")
     }
 
     private fun getUltralight(

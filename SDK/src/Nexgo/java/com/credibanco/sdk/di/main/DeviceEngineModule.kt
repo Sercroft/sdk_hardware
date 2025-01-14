@@ -1,13 +1,11 @@
 package com.credibanco.sdk.di.main
 
 import android.content.Context
-import com.credibanco.sdk.data.datasource.NFCTagDataSourceNexgo
 import com.credibanco.sdk.data.datasource.impl.ExternalPrintDataSourceNexgoImpl
 import com.credibanco.sdk.data.datasource.impl.NFCTagDataSourceNexgoImpl
 import com.credibanco.sdk.data.datasource.impl.PeripheralManagementDataSourceNexgoImpl
-import com.credibanco.sdk.data.datasource.impl.ScannerDataSourceNexgo
-import com.credibanco.sdk.data.datasource.impl.ScannerDataSourceNexgoImpl
 import com.credibanco.sdk.datasource.ExternalPrintDataSourceGeneral
+import com.credibanco.sdk.datasource.NFCTagDataSourceGeneral
 import com.credibanco.sdk.datasource.PeripheralManagementDataSource
 import com.nexgo.oaf.apiv3.APIProxy
 import com.nexgo.oaf.apiv3.DeviceEngine
@@ -45,13 +43,9 @@ object DeviceEngineModule {
 
     @Provides
     @Singleton
-    fun provideNFCTagDataSource(deviceEngine: DeviceEngine): NFCTagDataSourceNexgo =
+    fun provideNFCTagDataSource(deviceEngine: DeviceEngine): NFCTagDataSourceGeneral =
         NFCTagDataSourceNexgoImpl(deviceEngine)
 
-    @Provides
-    @Singleton
-    fun provideScannerDataSource(deviceEngine: DeviceEngine): ScannerDataSourceNexgo =
-        ScannerDataSourceNexgoImpl(deviceEngine)
 
     @Singleton
     @Provides
