@@ -18,4 +18,5 @@ class NFCIngenicoModule {
     @Singleton
     fun provideNFCTagDataSource(@ApplicationContext context: Context): NFCTagDataSourceGeneral =
         NFCTagDataSourceIngenicoImpl(context)
+
 }

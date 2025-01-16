@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.RemoteException
 import android.text.TextUtils
+import android.util.Log
 import com.credibanco.sdk.datasource.InitializationDataSource
 import com.credibanco.sdk.datasource.NFCTagDataSourceGeneral
 import com.credibanco.sdk.domain.EmvCallbackObjectSDK
@@ -60,16 +61,19 @@ import com.usdk.apiservice.aidl.icreader.DriverID
 import com.usdk.apiservice.aidl.icreader.UICCpuReader
 import com.usdk.apiservice.aidl.led.Light
 import com.usdk.apiservice.aidl.led.ULed
-import com.usdk.apiservice.aidl.pinpad.DeviceName
 import com.usdk.apiservice.aidl.pinpad.KAPId
-import com.usdk.apiservice.aidl.pinpad.KeySystem
 import com.usdk.apiservice.aidl.pinpad.OfflinePinVerify
 import com.usdk.apiservice.aidl.pinpad.PinPublicKey
 import com.usdk.apiservice.aidl.pinpad.PinVerifyResult
 import com.usdk.apiservice.aidl.pinpad.UPinpad
 import com.usdk.apiservice.aidl.serialport.SerialPortError
 import com.usdk.apiservice.aidl.serialport.USerialPort
+import com.usdk.apiservice.aidl.system.SystemError
+import com.usdk.apiservice.aidl.system.USystem
+import com.usdk.apiservice.aidl.system.setting.USetting
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -287,12 +291,12 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
             this.transactionCurrencyCode = COLOMBIA_CURRENCY_CODE
         }
 
-        pinpad = this.getPinPad(
-            KAPId(0, 0),
-            KeySystem.KS_MKSK,
-            DeviceName.IPP,
-        )
-        pinpad?.open()
+//        pinpad = this.getPinPad(
+//            KAPId(0, 0),
+//            KeySystem.KS_MKSK,
+//            DeviceName.IPP,
+//        )
+//        pinpad?.open()
 
         validateAndInitEmv()
     }
@@ -333,6 +337,29 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
                 ) + DECIMALS_AMOUNT_STRING
         }
         startEmv()
+    }
+
+    @Throws(IllegalStateException::class)
+    fun getSetting(): USetting {
+        val iBinder = object : IBinderCreator() {
+            @Throws(RemoteException::class)
+            override fun create(): IBinder {
+                return getSystem().setting
+            }
+        }.start()
+        return USetting.Stub.asInterface(iBinder)
+    }
+
+
+    @Throws(IllegalStateException::class)
+    fun getSystem(): USystem {
+        val iBinder: IBinder = object : IBinderCreator() {
+            override fun create(): IBinder {
+                return deviceService?.system!!
+            }
+        }.start()
+
+        return USystem.Stub.asInterface(iBinder)
     }
 
     override suspend fun startEmv() {
@@ -461,9 +488,40 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
         certEmvList?.let{ setCertEmvDataSecond(it)}
     }
 
+    private fun doInitEmv() {
+        Log.d("TAG-1", "onInitEMV")
+
+        manageAID()
+
+        val authInfo = StringValue()
+        val ret: Int = getSetting().getEMVAuthInfo(2, authInfo)
+        if (ret == EMVError.SUCCESS) {
+            Log.d("EMV Kernel version: ", authInfo.data)
+        }
+    }
+
+    private fun manageAID() {
+        val aids = listOf(
+            "A000000333010106",
+            "A000000333010103",
+            "A000000333010102",
+            "A000000333010101",
+            "A0000000651010",
+            "A0000000043060",
+            "A0000000041010",
+            "A000000003101002"
+        )
+        for (aid in aids) {
+            val ret = emv?.manageAID(ActionFlag.ADD, aid, true)
+            Log.d("TAG-1", "$ret => add AID : $aid")
+        }
+    }
+
     protected var emvEventHandler: EMVEventHandler = object : EMVEventHandler.Stub() {
         @Throws(RemoteException::class)
         override fun onInitEMV() {
+            doInitEmv()
+
         }
 
         @Throws(RemoteException::class)
@@ -493,7 +551,7 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
                         reSelect
                     )
                 )
-            }else {
+            } else {
                 respondAID(list[0].aid)
             }
         }
@@ -679,6 +737,8 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
         @Throws(RemoteException::class)
         override fun onObtainData(ins: Int, data: ByteArray) {
 
+            Log.d("onObtainData: ${Integer.toHexString(ins)},", "| data is: ${BytesUtil.bytes2HexString(data)}")
+
             //to do
             /*outputText(
                 "=> onObtainData: instruction is 0x" + Integer.toHexString(ins) + ", data is " + BytesUtil.bytes2HexString(
@@ -846,7 +906,7 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
     }
 
     private fun setCompleteTag(tagName: String, data: String): String{
-        return generateTag(tagName, data, data.length / 2) ?: ""
+        return generateTag(tagName, data, data.length / 2)
     }
 
     private fun loadEmvTags(): Boolean{
@@ -951,7 +1011,7 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
             val hexString = aid.uppercase()
 
             idEmvList?.let { allIdEmv ->
-                val idEmvListLength = allIdEmv.size ?: 0
+                val idEmvListLength = allIdEmv.size
                 for (i in 0 until idEmvListLength) {
                     val applicationIdTemp = allIdEmv[i].applicationId ?: ""
                     if (hexString.contains(applicationIdTemp) && applicationIdTemp.length > applicationId.length) {
@@ -1099,7 +1159,7 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
             if (isVisaContactless){
                 terminalCapabilitiesToReturn = resetTerminalCapabilitiesVisaContactless(idEmv)
             }
-            idEmv?.let {
+            idEmv.let {
                 terminalCapabilitiesToReturn =
                     configTerminalCapabilitiesContactless(idEmv, isVisaContactless)
             }
@@ -1159,26 +1219,26 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
     }
 
     private fun resetTerminalCapabilitiesVisaContactless(idEmv: IdEmv): String{
-        return idEmv?.ctless9f66?.let { generateTag("9F66", it, 4) } ?: ""
+        return idEmv.ctless9f66?.let { generateTag("9F66", it, 4) } ?: ""
     }
 
     private fun resetTerminalCapabilities(idEmv: IdEmv):String {
         this.bestAidFound = getAid()
-        return generateTag("9F33", idEmv?.terminalCapabilities.toString() , 3)
+        return generateTag("9F33", idEmv.terminalCapabilities.toString() , 3)
     }
 
     private fun generateTag(tag: String, data: String, maxBytesTagLength: Int): String {
         val maxBytesTagLengthToSet: Int = maxBytesTagLength * 2
         return if (data.length < maxBytesTagLengthToSet) {
             val dataToSet = data.padStart(maxBytesTagLengthToSet, ZERO_NUMBER_PADDING)
-            val dataToSetBytesLength: Int? = dataToSet?.length?.div(2)
+            val dataToSetBytesLength: Int? = dataToSet.length?.div(2)
             val dataToSetBytesLengthHEX =
                 dataToSetBytesLength?.let { Integer.toHexString(it).padStart (2, ZERO_NUMBER_PADDING) }
             "$tag$dataToSetBytesLengthHEX$dataToSet"
         }else{
             val dataToFill = data.substring(data.length - maxBytesTagLengthToSet, data.length)
             val dataToSet = dataToFill.padStart(maxBytesTagLengthToSet, ZERO_NUMBER_PADDING)
-            val dataToSetBytesLength: Int? = dataToSet?.length?.div(2)
+            val dataToSetBytesLength: Int? = dataToSet.length?.div(2)
             val dataToSetBytesLengthHEX =
                 dataToSetBytesLength?.let { Integer.toHexString(it).padStart (2, ZERO_NUMBER_PADDING) }
             "$tag$dataToSetBytesLengthHEX$dataToSet"
@@ -1188,11 +1248,11 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
     private fun configureVisaParameters(idEmv: IdEmv): String {
 
 
-        val ctlessLowerFloorLimit = idEmv?.ctlessLowerFloorLimit?.toString()?.padEnd (12, ZERO_NUMBER_PADDING)
+        val ctlessLowerFloorLimit = idEmv.ctlessLowerFloorLimit?.toString()?.padEnd (12, ZERO_NUMBER_PADDING)
 
 
         //Set DF8126 Contactless Floor Limit
-        val ctlessCvmLimit = idEmv?.ctlessCvmFloorLimit
+        val ctlessCvmLimit = idEmv.ctlessCvmFloorLimit
 
 
         return "DF812306$ctlessLowerFloorLimit"
@@ -1222,7 +1282,7 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
         if (loadEmvTags()){
             activeBeepAndLed()
             pinBlockTypeCard = PinUtil.getPinBlockType(null).toString()
-            pinBlockTypeCard?.let {
+            pinBlockTypeCard.let {
                 emvCallback.invoke(EmvCallbackObjectSDK.PinSDKBlockCallback(EmvCallbackObjectSDK.PIN_BLOCK_CALLBACK, it))
             }
 
@@ -1253,7 +1313,7 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
         applicationId = getAid()
 
         // TODO: CHANGE THIS TRUE FOR PROD
-        arpcValidationIsRequiredForCard = tag82?.let { isTag82Byte1Bit3(it) } == true
+        arpcValidationIsRequiredForCard = tag82.let { isTag82Byte1Bit3(it) } == true
 
         emv?.let {
             emvString = getTagList()
@@ -1277,7 +1337,7 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
 
         if (!tag82String.isNullOrEmpty()) {
             val tag82InformationArray = getTagInformation(tag82String)
-            val tag82Byte1String = tag82InformationArray[tag82InformationArray.size - 2] ?: ""
+            val tag82Byte1String = tag82InformationArray[tag82InformationArray.size - 2]
             val tag82Byte1Int = DataConversionUtil.hexToInt(tag82Byte1String) ?: 0
             var tag82Byte1Binary = DataConversionUtil.intToBinary(tag82Byte1Int, 8)
             val tag82Byte1Bit3 = tag82Byte1Binary[tag82Byte1Binary.length - 3].toString()
@@ -1569,21 +1629,6 @@ class NFCTagDataSourceIngenicoImpl @Inject constructor(
             kernelRunState = false
         }
 
-    }
-
-    private fun getKernelVersion() {
-        try {
-            val authInfo = StringValue()
-            /*if (ret == EMVError.SUCCESS) {
-                Log.d("TAG-1", "EMV kernel version: " + authInfo.data)
-                Log.d("TAG-1", "EMV: " + DeviceHelper.me().getEMV().toString())
-                //outputBlackText("EMV kernel version: " + authInfo.data)
-            } else {
-                //outputRedText("EMV kernel version: fail, ret = $ret")
-            }*/
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-        }
     }
 
 
