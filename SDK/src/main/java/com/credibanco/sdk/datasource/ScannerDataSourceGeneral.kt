@@ -1,8 +1,8 @@
-package com.credibanco.sdk.data.datasource.impl
+package com.credibanco.sdk.datasource
 
 import android.os.Bundle
 import com.credibanco.sdk.domain.model.ScannerCallbackObject
 
-interface ScannerDataSourceNexgo {
+interface ScannerDataSourceGeneral {
     suspend operator fun invoke(bundle: Bundle?, scannerCallback: (callbackObjectType: ScannerCallbackObject) -> Unit)
 }

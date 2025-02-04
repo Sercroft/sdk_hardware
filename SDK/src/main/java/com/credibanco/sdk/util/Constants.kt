@@ -17,6 +17,7 @@ object Constants {
     const val UN20  = "UN20"
     const val N6    = "N6"
     const val N86   = "N86"
+    const val N6S   = "N6S"
 
     // INGENICO MODELS
     const val DX4000 = "DX4000"

@@ -8,7 +8,8 @@ import android.os.Build
 import android.os.Environment
 import android.util.Base64
 import com.credibanco.sdk.data.mapper.NexgoPrintResponseMapper
-import com.credibanco.sdk.datasource.PrintDataSource
+import com.credibanco.sdk.datasource.ExternalPrintDataSourceGeneral
+import com.credibanco.sdk.domain.KernelAvailableStateCallBackObjectSDK
 import com.credibanco.sdk.util.NexgoPrintingConstants.ALIGN_CENTER
 import com.credibanco.sdk.util.NexgoPrintingConstants.ALIGN_RIGHT
 import com.credibanco.sdk.util.NexgoPrintingConstants.DEFAULT_LETTER_SPACING
@@ -41,7 +42,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class ExternalPrintDataSourceNexgoImpl @Inject constructor(
     private val deviceEngine: DeviceEngine
-) : PrintDataSource {
+) : ExternalPrintDataSourceGeneral {
 
     private lateinit var printer: Printer
 
@@ -70,6 +71,11 @@ class ExternalPrintDataSourceNexgoImpl @Inject constructor(
         printer.setLetterSpacing(letterSpacing ?: DEFAULT_LETTER_SPACING)
         printer.setGray(getGrayLevelEnum(grayLevel))
     }
+
+    override suspend fun isKernelRun(): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun invoke(
         linesToPrint: ArrayList<String>,
         packageName: String,
@@ -151,6 +157,11 @@ class ExternalPrintDataSourceNexgoImpl @Inject constructor(
             }
         }
     }
+
+    override fun isKernelAvailableState(kernelAvailableCallback: (callbackObjectType: KernelAvailableStateCallBackObjectSDK) -> Unit) {
+        TODO("Not yet implemented")
+    }
+
 
     private fun getFontSize(fontSize: String): FontEntity {
         return when(fontSize) {
